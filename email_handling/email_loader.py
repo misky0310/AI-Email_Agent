@@ -1,16 +1,7 @@
 import imaplib
 import email
-import os
 from email.header import decode_header
-from dotenv import load_dotenv
-from clean_body import clean_email_body
-
-# Load environment variables from .env file
-load_dotenv()
-
-username = os.getenv("GMAIL_USER_STUDENT")
-app_password = os.getenv("GMAIL_APP_PASSWORD_STUDENT")
-
+from email_handling.clean_body import  clean_email_body
 
 def fetch_emails(server, user, password, n=10):
     try:
@@ -20,7 +11,7 @@ def fetch_emails(server, user, password, n=10):
         mail.select('inbox')
 
         # Search all emails in the inbox
-        status, msgs = mail.search(None, "ALL")
+        status, msgs = mail.search(None, "UNSEEN")
         if status != 'OK':
             print("No messages found!")
             return []
@@ -79,12 +70,3 @@ def fetch_emails(server, user, password, n=10):
     except Exception as e:
         print("General error:", str(e))
         return []
-
-
-# Fetch and print emails
-if __name__ == "__main__":
-    store = fetch_emails("imap.gmail.com", username, app_password, n=10)
-    for i,email in enumerate(store,start=1):
-        print(f"Email {i} , From:{email.get('From')} , Date:{email.get("Date")}\n")
-        print(f"Subject :- {email.get('Subject')}\n")
-        print(f"Body :- {email.get('Body')}")
